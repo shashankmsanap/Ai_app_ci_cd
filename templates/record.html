@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Recording</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #status {
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        #result {
+            text-align: left;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Patient Recording System</h1>
+    <button id="recordButton">Start Recording (5 seconds)</button>
+    <div id="status"></div>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('recordButton').addEventListener('click', function() {
+            const button = this;
+            const statusDiv = document.getElementById('status');
+            const resultDiv = document.getElementById('result');
+            
+            button.disabled = true;
+            statusDiv.textContent = "Listening... (5 seconds)";
+            
+            fetch('/record', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    statusDiv.textContent = "Recording processed successfully!";
+                    resultDiv.innerHTML = `
+                        <p><strong>Name:</strong> ${data.data.name}</p>
+                        <p><strong>Age:</strong> ${data.data.age || 'Not specified'}</p>
+                        <p><strong>Symptoms:</strong> ${data.data.symptoms.join(', ') || 'None'}</p>
+                    `;
+                } else {
+                    statusDiv.textContent = "Error processing recording";
+                    resultDiv.textContent = data.message;
+                }
+                button.disabled = false;
+            })
+            .catch(error => {
+                statusDiv.textContent = "Error processing recording";
+                resultDiv.textContent = error.message;
+                button.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+# Create .gitignore to exclude unnecessary files
+@"
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# Environment files
+.env
+.env.local
+
+# Data files
+patient_data.json
+
+# IDE specific files
+.vscode/
+.idea/
+"@ > .gitignore
