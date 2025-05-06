@@ -1,0 +1,19 @@
+name: Provision Infrastructure
+on:
+  workflow_run:
+    workflows: ["Build Artifact"]
+    branches: [main]
+    types: [completed]
+
+jobs:
+  terraform:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v2
+      - run: terraform init
+        working-directory: ./infra
+      - run: terraform validate
+        working-directory: ./infra
