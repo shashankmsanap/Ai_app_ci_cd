@@ -1,0 +1,14 @@
+name: Test Application
+on: [push]
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Files Exist
+        run: |
+          ls -la
+          [ -f main.py ] || exit 1
+          [ -f requirements.txt ] || exit 1
+          echo " files are present start with the pipeline"
