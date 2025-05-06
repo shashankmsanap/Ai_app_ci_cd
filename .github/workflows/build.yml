@@ -1,0 +1,21 @@
+name: Build Artifact
+on:
+  workflow_run:
+    workflows: ["Test Application"]
+    branches: [main]
+    types: [completed]
+
+jobs:
+  build:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create Deployment Package
+        run: |
+          mkdir -p dist
+          tar czvf dist/app-${{ github.sha }}.tar.gz *.py utils/ templates/
+      - uses: actions/upload-artifact@v3
+        with:
+          name: app-package
+          path: dist/
