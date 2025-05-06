@@ -11,11 +11,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        
+      - name: List files (Debug)
+        run: ls -laR  # Verify file structure
+        
       - name: Create Deployment Package
         run: |
           mkdir -p dist
-          tar czvf dist/app-${{ github.sha }}.tar.gz *.py utils/ templates/
+          # Convert potential Windows paths to Linux format
+          FILES="main.py utils.py"
+          [ -d templates ] && FILES="$FILES templates"
+          
+          echo "Packaging files: $FILES"
+          tar czvf dist/app-${{ github.sha }}.tar.gz $FILES || {
+            echo "Failed to create archive"
+            ls -la  # Debug missing files
+            exit 1
+          }
+          
+      - name: Verify archive
+        run: |
+          tar tzvf dist/app-${{ github.sha }}.tar.gz
+          [ $(tar tzf dist/app-${{ github.sha }}.tar.gz | wc -l) -gt 0 ] || {
+            echo "Error: Empty archive!"
+            exit 1
+          }
+          
       - uses: actions/upload-artifact@v4
         with:
           name: app-package
           path: dist/
+          retention-days: 1
