@@ -13,14 +13,14 @@
 
 **Tech Stack**: 
 
-Programming        :: Python 3.9 + Flask, 
-Version Control    :: Git, Github
-CI CD              :: GitHub Actions.
-Containerization   :: Docker 
-Infrastructure     :: Terraform (IaC).
-Cloud deployment   :: Azure app service.
-Monitoring         :: Azure Monitor, Network watcher.
-Incident management:: Jira.
+- Programming        :: Python 3.9 + Flask, 
+- Version Control    :: Git, Github
+- CI CD              :: GitHub Actions.
+- Containerization   :: Docker 
+- Infrastructure     :: Terraform (IaC).
+- Cloud deployment   :: Azure app service.
+- Monitoring         :: Azure Monitor, Network watcher.
+- Incident management:: Jira.
 
 **DevOps Pipeline Features**: 
 
