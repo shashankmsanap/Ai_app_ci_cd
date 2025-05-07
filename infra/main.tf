@@ -112,7 +112,7 @@ resource "azurerm_linux_virtual_machine" "ai_app" {
   location            = azurerm_resource_group.ai_app.location
   size                = "Standard_B2s"  # Burstable for cost savings
   admin_username      = var.vm_username
-  custom_data         = base64encode(templatefile("${path.module}/cloud-init.yaml", {
+  custom_data         = base64encode(templatefile("${path.module}/cloud-init.yml", {
     app_repo       = var.app_repository_url
     python_version = "3.9"
   }))
