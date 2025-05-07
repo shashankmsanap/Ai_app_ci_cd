@@ -3,18 +3,17 @@ on:
   pull_request:
     paths: ['infra/**']
 
+permissions:
+  contents: read
+  pull-requests: write  # Required for PR comments
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: "1.5.7"  # Pin your version
-
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v2
+        
       - name: Terraform Init
         working-directory: ./infra
         run: terraform init -backend=false
@@ -23,16 +22,19 @@ jobs:
         working-directory: ./infra
         run: terraform validate -no-color
 
-      - name: Add Validation Comment to PR
-        uses: actions/github-script@v6
+      - name: Add Validation Comment
         if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
         with:
           script: |
-            const output = `Terraform validation passed!
-            View details: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
+            try {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: ' Terraform validation passed!\n' +
+                      `Details: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+              })
+            } catch (error) {
+              console.log('Comment not required: ' + error.message)
+            }
